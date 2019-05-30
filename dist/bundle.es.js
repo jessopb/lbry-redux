@@ -606,12 +606,16 @@ const Lbry = {
   isConnected: false,
   connectPromise: null,
   daemonConnectionString: 'http://localhost:5279',
+  apiHeaders: {},
 
   // Allow overriding daemon connection string (e.g. to `/api/proxy` for lbryweb)
   setDaemonConnectionString: value => {
     Lbry.daemonConnectionString = value;
   },
 
+  addApiHeaders: headersObj => {
+    Lbry.apiHeaders = Object.assign(Lbry.apiHeaders, headersObj);
+  },
   // Allow overriding Lbry methods
   overrides: {},
   setOverride: (methodName, newMethod) => {
@@ -730,6 +734,8 @@ function apiCall(method, params, resolve, reject) {
   const counter = new Date().getTime();
   const options = {
     method: 'POST',
+    // headers: {"X-Lbry-Auth-Token": Lbry.apiHeaders[Object.keys(Lbry.apiHeaders)[0]]},
+    headers: Lbry.apiHeaders,
     body: JSON.stringify({
       jsonrpc: '2.0',
       method,
